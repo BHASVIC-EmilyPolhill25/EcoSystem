@@ -12,26 +12,48 @@ public class Plant extends Organism
      * Act - do whatever the Plant wants to do. This method is called whenever
      * the 'Act' or 'Run' button gets pressed in the environment.
      */
-    private int age;
-    private int health;
+
     public Plant()
     {
-        
+        getImage().scale(getImage().getWidth() /2, getImage().getHeight()/2);
+        this.age = 0;
+        this.maxAge = 1800;
+        this.energy = 2;
     }
     public void act()
     {
         // Add your action code here.
-        age++;
+        super.act();
+        energy++;
         newPlant();
     }
     public void newPlant()
     {
-        MyWorld myWorld = (MyWorld)getWorld();
-        int width = myWorld.getWidth();
-        if ((age % 600) == 0)
+        if (stageOfLife < 1)
+            return;
+        if (Greenfoot.getRandomNumber(300) != 0)
+            return;
+        double angle = Math.toRadians(Greenfoot.getRandomNumber(360));
+        
+        int distance = Greenfoot.getRandomNumber(10);
+        if (Greenfoot.getRandomNumber(100) < 80)
         {
-            int x = Greenfoot.getRandomNumber(width);
-            getWorld().addObject(new Plant(), x, getY());
-        } 
+            distance = Greenfoot.getRandomNumber(60);
+        }
+        else
+        {
+            distance = 150 + Greenfoot.getRandomNumber(151);
+        }
+        int xOffset = (int)(distance * Math.cos(angle));
+        int yOffset = (int)(distance * Math.cos(angle));
+        
+        if (getObjectsAtOffset(xOffset, yOffset, Plant.class).isEmpty())
+        {
+            getWorld().addObject(new Plant(), getX() + xOffset, getY() + yOffset);
+        }
     }
-}
+    public void reduceEnergy()
+    {
+        this.energy--;
+    }
+} 
