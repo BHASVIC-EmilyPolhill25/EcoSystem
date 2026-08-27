@@ -15,10 +15,7 @@ public class Plant extends Organism
 
     public Plant()
     {
-        getImage().scale(getImage().getWidth() /2, getImage().getHeight()/2);
-        this.age = 0;
-        this.maxAge = 1800;
-        this.energy = 2;
+        super();
     }
     public void act()
     {
@@ -27,33 +24,65 @@ public class Plant extends Organism
         energy++;
         newPlant();
     }
+    protected void setVariables()
+    {
+        this.age = 0;
+        this.maxAge = 1800;
+        this.energy = 2;
+    }
     public void newPlant()
     {
+        //must be older that 1/3 of its lifespan
         if (stageOfLife < 1)
             return;
+        //Ensures plants are only created sporadically
         if (Greenfoot.getRandomNumber(300) != 0)
             return;
+        //Allows a random direction from the parent plant
         double angle = Math.toRadians(Greenfoot.getRandomNumber(360));
-        
-        int distance = Greenfoot.getRandomNumber(10);
+        //Random distance, occassionally further out, and mostly near the parent
+        int distance;
         if (Greenfoot.getRandomNumber(100) < 80)
         {
-            distance = Greenfoot.getRandomNumber(60);
+            distance = Greenfoot.getRandomNumber(50);
         }
         else
         {
             distance = 150 + Greenfoot.getRandomNumber(151);
         }
+        //Offset from the parent plant for x and y
         int xOffset = (int)(distance * Math.cos(angle));
-        int yOffset = (int)(distance * Math.cos(angle));
-        
-        if (getObjectsAtOffset(xOffset, yOffset, Plant.class).isEmpty())
+        int yOffset = (int)(distance * Math.sin(angle));
+        //checks coordinate is in world
+        if(!xInWorld(getX() + xOffset) || !yInWorld(getY() + yOffset))
+            return;
+        //checks that a plant is not near the proposed coordinate
+        if (isFree(getX() + xOffset, getY() + yOffset,20))
         {
             getWorld().addObject(new Plant(), getX() + xOffset, getY() + yOffset);
         }
     }
-    public void reduceEnergy()
+    protected boolean isFree(int x, int y, int radius)
     {
-        this.energy--;
+        for (Plant plant: getWorld().getObjects(Plant.class))
+        {
+            double distance = findDistance(plant, x, y);
+            if (distance<radius)
+            {
+                return false;
+            }
+        }
+        return true;
     }
+    //increases the size of the plant
+    protected void grow()
+    {
+        getImage().scale(originalWidth /3, originalHeight /3);
+    }
+    //decreases the size of the plant
+    protected void shrink()
+    {
+        getImage().scale(originalWidth /4, originalHeight /4);
+    }
+    
 } 

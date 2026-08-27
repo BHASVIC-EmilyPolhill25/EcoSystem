@@ -12,59 +12,47 @@ public class Fox extends Animal
      * Act - do whatever the Fox wants to do. This method is called whenever
      * the 'Act' or 'Run' button gets pressed in the environment.
      */
-    public Fox()
+    //Foxes that were created after the simulation started
+    public Fox(Animal mother)
     {
-        getImage().scale(getImage().getWidth() /2, getImage().getHeight()/2);
-        this.age = 0;
-        this.maxAge = 4200;
-        this.speed = 1;
-        this.energy = 1800;
-        this.maxEnergy = 5000;
-        this.breedEnergyMin = 1500;
-        this.breedCost = 500;
+        super(mother);
+    }
+    //Foxes that are created with the simulation
+    public Fox(boolean female)
+    {
+        super(female);
+        //setVariables();
     }
     public void act()
     {
-        // Add your action code here.
         super.act();
     }
-    protected void moveAnimal()
+    protected void setVariables()
     {
-        Fox nearestFox = reproduce(Fox.class);
-        if (nearestFox!=null)
-        {
-            if (intersects(nearestFox))
-                {
-                    breed(nearestFox, Fox.class);
-                }
-                else
-                {
-                    moveTowardObject(nearestFox);
-                }
-        }
-        else
-        {
-            Rabbit nearest = findNearest(Rabbit.class);
-        if (nearest!=null)
-        {
-            moveTowardObject(nearest);
-        }
-        else
-        {
-            wander();
-        }
-        }
+        this.age = 0;
+        this.maxAge = 4200;
+        this.speed = 1;
+        this.energy = 1000;
+        this.maxEnergy = 5000;
+        this.breedEnergyMin = 500;
+        this.breedCost = 500;
+        this.litterSize = 1;
+        this.staticEatTime = 60;
     }
-    protected void eat()
+    protected Animal createBaby(Animal mother)
     {
-        if (energy < maxEnergy)
-        {
-            Rabbit currentRabbit = (Rabbit)getOneIntersectingObject(Rabbit.class);
-            if (currentRabbit != null)
-            {
-                energy += (currentRabbit.getEnergy() / 2);
-                getWorld().removeObject(currentRabbit);
-            }
-        }
+        return new Fox(mother);
+    }
+    protected Class<? extends Animal> getMateClass()
+    {
+        return Fox.class;
+    }
+    protected Class<? extends Animal> getPredatorClass()
+    {
+        return null;
+    }
+    protected Class<? extends Organism> getFoodClass()
+    {
+        return Rabbit.class;
     }
 }

@@ -13,76 +13,45 @@ public class Rabbit extends Animal
      * Act - do whatever the Rabbit wants to do. This method is called whenever
      * the 'Act' or 'Run' button gets pressed in the environment.
      */
-    public Rabbit()
+    //Rabbits created after the simulation started
+    public Rabbit(Animal mother)
     {
-        getImage().scale(getImage().getWidth() /2, getImage().getHeight()/2);
-        this.age = 0;
+        super(mother);
+    }
+    //Rabbits created with the simulation
+    public Rabbit(boolean female)
+    {
+        super(female);
+    }
+    protected void setVariables()
+    {
         this.maxAge = 3000;
+        this.age = 0;
         this.speed = 2;
-        this.energy = 1200;
-        this.maxEnergy = 2400;
+        this.energy = 1000;
+        this.maxEnergy = 2500;
         this.breedEnergyMin = 800;
         this.breedCost = 200;
+        this.litterSize = 3;
     }
     public void act()
     {
-        // Add your action code here.
         super.act();
     }
-    protected void moveAnimal()
+    protected Animal createBaby(Animal mother)
     {
-        List<Fox> foxes = getObjectsInRange(200, Fox.class);
-        if (foxNearby())
-        {
-            runAway();
-        }
-        else 
-        {
-            Rabbit nearestRabbit = reproduce(Rabbit.class);
-            if (nearestRabbit != null)
-            {
-                if (intersects(nearestRabbit))
-                {
-                    breed(nearestRabbit, Rabbit.class);
-                }
-                else
-                {
-                    moveTowardObject(nearestRabbit);
-                }
-            }
-            else
-            {
-                Plant nearest = findNearest(Plant.class);
-                if (nearest!=null)
-                {
-                    moveTowardObject(nearest);
-                }
-                else
-                {
-                    wander();
-                }
-            }
-        }
+        return new Rabbit(mother);
     }
-    protected void eat()
+    protected Class<? extends Animal> getMateClass()
     {
-        if (energy < maxEnergy)
-        {
-            Plant currentPlant = (Plant)getOneIntersectingObject(Plant.class);
-            if (currentPlant != null)
-            {
-                energy+= (currentPlant.getEnergy()/2);
-                getWorld().removeObject(currentPlant);
-            }
-        }
+        return Rabbit.class;
     }
-    public boolean foxNearby()
+    protected Class<? extends Animal> getPredatorClass()
     {
-        List<Fox> foxes = getObjectsInRange(200, Fox.class);
-        return !foxes.isEmpty();
+        return Fox.class;
     }
-    public void runAway()
+    protected Class<? extends Organism> getFoodClass()
     {
-        
+        return Plant.class;
     }
 }
